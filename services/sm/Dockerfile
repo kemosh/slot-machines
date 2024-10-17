@@ -10,4 +10,4 @@ COPY requirements.txt pyproject.toml ./
 COPY source ./source
 RUN pip install -r requirements.txt
 
-ENTRYPOINT ["uvicorn", "--host", "0.0.0.0", "--port", "8080", "sm.main:app"]
+ENTRYPOINT ["uvicorn", "--host", "0.0.0.0", "--port", "8080", "--reload", "sm.main:app"]
