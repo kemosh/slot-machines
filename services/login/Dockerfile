@@ -11,4 +11,9 @@ COPY source ./source
 RUN pip install -r requirements.txt
 RUN pip install -e .
 
-ENTRYPOINT ["uvicorn", "--host", "0.0.0.0", "--port", "8080", "--reload", "login.main:app"]
+# watchdog
+RUN pip install watchdog
+
+#ENTRYPOINT ["python", "-m", "login.main"]
+ENTRYPOINT ["watchmedo", "auto-restart", "-p", "*.py", "-R", "python", "--", "-m", "login.main"]
+
