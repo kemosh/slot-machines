@@ -24,27 +24,55 @@ services:
     networks:
       - slot-machines-net
 
+  login:
+    image: login:latest
+    container_name: "login"
+    env_file: .env
+    ports:
+      - 8080:8080
+    volumes:
+      # DEBUG mount override
+      - ./services/login/source:/login/source:rw
+    networks:
+      - slot-machines-net
+
   sm_manager:
     image: sm_manager:latest
     container_name: "sm_manager"
     env_file: .env
     ports:
-      - 8080:8080
+      - 8090:8080
     volumes:
       # DEBUG mount override
       - ./services/sm_manager/source:/sm_manager/source:rw
     networks:
       - slot-machines-net
 
-  sm:
+  sm_1:
     image: sm:latest
-    container_name: "sm"
+    container_name: "sm_1"
     env_file: .env
+    environment:
+      - SM_ID=1
     ports:
-      - 8081:8080
+      - 8091:8080
     volumes:
       # DEBUG mount override
-      - ./services/sm/source:/sm/source:rw
+      - ./services/sm/source:/sm/source:r
+    networks:
+      - slot-machines-net
+
+  sm_2:
+    image: sm:latest
+    container_name: "sm_2"
+    env_file: .env
+    environment:
+      - SM_ID=2
+    ports:
+      - 8092:8080
+    volumes:
+      # DEBUG mount override
+      - ./services/sm/source:/sm/source:r
     networks:
       - slot-machines-net
 
