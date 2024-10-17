@@ -1,0 +1,29 @@
+services:
+  rabbitmq:
+    image: rabbitmq:4.0.2-management-alpine
+    container_name: "rabbitmq"
+    env_file: .env
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - ./pvs/rabbitmq/data/:/var/lib/rabbitmq/
+        - ./pvs/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+        - slot-machines-net
+
+  mongodb:
+    image: mongo:8.0.1
+    container_name: "mongodb"
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - 27017:27017
+    volumes:
+      - ./pvs/mongodb/data:/data/db
+    networks:
+      - slot-machines-net
+
+networks:
+  slot-machines-net:
+    driver: bridge
