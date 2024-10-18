@@ -87,7 +87,7 @@ def init_database(cfg: Config):
     db.drop_collection("users")
     db.drop_collection("outbox")
     # create collections
-    col_users = db["customers"]
+    col_users = db["users"]
     col_outbox = db["outbox"]
     # fillup sample data
     users = [
