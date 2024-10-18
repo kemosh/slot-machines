@@ -17,7 +17,7 @@ from nicegui import app, ui
 from login.config import Config
 
 # in reality users passwords would obviously need to be hashed
-passwords = {'kem': 'kem', 'gim': 'gim'}
+passwords = {}
 
 unrestricted_page_routes = {'/login'}
 
@@ -81,14 +81,12 @@ def init_database(cfg: Config):
         username=cfg.mongo_user,
         password=cfg.mongo_pass
     )
-    # db
-    db = client["login"]
     # drop collections
-    db.drop_collection("users")
-    db.drop_collection("outbox")
+    client["login"].drop_collection("users")
+    client["login"].drop_collection("outbox")
     # create collections
-    col_users = db["users"]
-    col_outbox = db["outbox"]
+    col_users = client["login"]["users"]
+    col_outbox = client["login"]["outbox"]
     # fillup sample data
     users = [
         {"name": "kem", "pass": "kem"},
@@ -96,9 +94,26 @@ def init_database(cfg: Config):
     ]
     col_users.insert_many(users)
 
+def read_users(cfg: Config):
+    # connection
+    client = pymongo.MongoClient(
+        cfg.mongo_host,
+        cfg.mongo_port,
+        username=cfg.mongo_user,
+        password=cfg.mongo_pass
+    )
+    # collection
+    col_users = client["login"]["users"]
+    # query
+    query = {}
+    projection = {}
+    for user in col_users.find(query, projection):
+        passwords[user["name"]] = user["pass"]
 
 if __name__ in {'__main__', '__mp_main__'}:
     cfg = Config()
     init_database(cfg)
+    read_users(cfg)
+    # start gui
     ui.run(storage_secret='THIS_NEEDS_TO_BE_CHANGED')
 

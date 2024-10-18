@@ -4,10 +4,8 @@ Users can play and win vitual tokens.
 ## Prerequisites
 1. Install system packages:
    - docker
-   - kind
    - direnv
    - yq
-   - kubectx
    - sponge
 
 2. Activate `direnv` (execute and/or add to profile):
