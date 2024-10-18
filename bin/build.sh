@@ -2,6 +2,11 @@
 
 set -euo pipefail
 
+function log { echo "$@" >&2; }
+function error { log "ERROR: $@"; exit 1; }
+
+export DOCKER_CLI_HINTS=false
+
 dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export PROJECT_DIR="$(cd "$dir/.." && pwd)"
 
@@ -15,16 +20,11 @@ for vfile in $PROJECT_DIR/services/*/volumes.yaml; do
     done
 done
 
-# generate requirements
-for rin in $PROJECT_DIR/services/*/requirements.in; do
-    dir=$(dirname "${rin}")
-    echo "compiling ${dir}/requirements.in"
-    cd $dir && uv pip compile -q -o $dir/requirements.txt $dir/requirements.in
-done
-
 # build docker images
 for df in $PROJECT_DIR/services/*/Dockerfile; do
     dir=$(dirname "${df}")
     service_name="$(basename "$dir")"
+    log "building service: ${service_name}"
     cd $dir && docker build -t ${service_name} .
 done
+

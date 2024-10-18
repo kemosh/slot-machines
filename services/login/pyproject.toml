@@ -1,7 +1,3 @@
-[build-system]
-requires = ["setuptools>=61.2"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "login"
 version = "0.1.0"
@@ -17,17 +13,26 @@ dependencies = [
 [project.urls]
 Homepage = "https://example.com"
 
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
 [project.optional-dependencies]
-test = [
-    "pytest",
-    "pytest-randomly",
+debug = [
+  "psycopg-binary",
+  "remote-pdb",
 ]
-dev = [
-    "black",
-    "flake8",
-    "mypy",
+
+[tool.uv]
+dev-dependencies = [
+  "pytest",
+  "pytest-randomly",
+  "black",
+  "flake8",
+  "mypy",
 ]
 
 [tool.setuptools.packages.find]
 where = ["source"]
 namespaces = false
+
