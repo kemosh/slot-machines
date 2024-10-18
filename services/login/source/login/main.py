@@ -5,6 +5,7 @@ Please see the `OAuth2 example at FastAPI <https://fastapi.tiangolo.com/tutorial
 use the great `Authlib package <https://docs.authlib.org/en/v0.13/client/starlette.html#using-fastapi>`_ to implement a classing real authentication system.
 Here we just demonstrate the NiceGUI integration.
 """
+import pymongo
 from typing import Optional
 
 from fastapi import Request
@@ -12,6 +13,8 @@ from fastapi.responses import RedirectResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from nicegui import app, ui
+
+from login.config import Config
 
 # in reality users passwords would obviously need to be hashed
 passwords = {'kem': 'kem', 'gim': 'gim'}
@@ -70,6 +73,32 @@ def login() -> Optional[RedirectResponse]:
     return None
 
 
+def init_database(cfg: Config):
+    # connection
+    client = pymongo.MongoClient(
+        cfg.mongo_host,
+        cfg.mongo_port,
+        username=cfg.mongo_user,
+        password=cfg.mongo_pass
+    )
+    # db
+    db = client["login"]
+    # drop collections
+    db.drop_collection("users")
+    db.drop_collection("outbox")
+    # create collections
+    col_users = db["customers"]
+    col_outbox = db["outbox"]
+    # fillup sample data
+    users = [
+        {"name": "kem", "pass": "kem"},
+        {"name": "gim", "pass": "gim"},
+    ]
+    col_users.insert_many(users)
+
+
 if __name__ in {'__main__', '__mp_main__'}:
+    cfg = Config()
+    init_database(cfg)
     ui.run(storage_secret='THIS_NEEDS_TO_BE_CHANGED')
 

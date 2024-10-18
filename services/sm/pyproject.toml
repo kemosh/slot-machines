@@ -7,6 +7,12 @@ requires-python = ">= 3.12"
 dependencies = [
     "fastapi",
     "uvicorn[standard]",
+    "python-dateutil",
+    "python-dotenv",
+    "pydantic",
+    "pymongo",
+    "redis",
+    "pika",
 ]
 
 [project.urls]
